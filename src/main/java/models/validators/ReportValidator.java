@@ -31,6 +31,12 @@ public class ReportValidator {
             errors.add(contentError);
         }
 
+        //商談状況の内容のチェック
+        String progressError = validateProgress(rv.getProgress());
+        if (!progressError.equals("")) {
+            errors.add(progressError);
+        }
+
         return errors;
     }
 
@@ -56,6 +62,20 @@ public class ReportValidator {
     private static String validateContent(String content) {
         if (content == null || content.equals("")) {
             return MessageConst.E_NOCONTENT.getMessage();
+        }
+
+        //入力値がある場合は空文字を返却
+        return "";
+    }
+
+    /**
+     * 内容に入力値があるかをチェックし、入力値がなければエラーメッセージを返却
+     * @param progress 内容
+     * @return エラーメッセージ
+     */
+    private static String validateProgress(String progress) {
+        if (progress == null || progress.equals("")) {
+            return MessageConst.E_NOPROGRESS.getMessage();
         }
 
         //入力値がある場合は空文字を返却

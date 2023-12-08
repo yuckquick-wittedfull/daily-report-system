@@ -36,8 +36,21 @@ public interface JpaConst {
     String REP_COL_REP_DATE = "report_date"; //いつの日報かを示す日付
     String REP_COL_TITLE = "title"; //日報のタイトル
     String REP_COL_CONTENT = "content"; //日報の内容
+    String REP_COL_PROGRESS = "progress"; //商談状況の内容
     String REP_COL_CREATED_AT = "created_at"; //登録日時
     String REP_COL_UPDATED_AT = "updated_at"; //更新日時
+
+
+
+    //いいね数テーブル
+    String TABLE_GOOD = "good"; //テーブル名
+    //いいね数テーブルカラム
+    String GOOD_COL_ID = "id"; //id
+    String GOOD_COL_REP = "report_id"; //いいねをつけた日報のid
+    String GOOD_COL_EMP = "person"; //いいねをつけた従業員のid
+    String GOOD_COL_CREATED_AT = "create_at"; //いいねの登録日時
+
+
 
     //Entity名
     String ENTITY_EMP = "employee"; //従業員
@@ -74,4 +87,9 @@ public interface JpaConst {
     String Q_REP_COUNT_ALL_MINE = ENTITY_REP + ".countAllMine";
     String Q_REP_COUNT_ALL_MINE_DEF = "SELECT COUNT(r) FROM Report AS r WHERE r.employee = :" + JPQL_PARM_EMPLOYEE;
 
+
+
+    //指定した従業員が作成した日報のいいね数を取得する
+    String Q_GOOD_COUNT_ALL_MINE = ENTITY_REP + ".countgd";
+    String Q_GOOD_COUNT_ALL_MINE_DEF = "SELECT COUNT(g) FROM Good AS g WHERE g.report.id = :" + JPQL_PARM_EMPLOYEE;
 }

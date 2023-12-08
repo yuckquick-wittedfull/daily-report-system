@@ -6,12 +6,17 @@ import java.util.List;
 
 import javax.servlet.ServletException;
 
+import actions.views.EmployeeConverter;
 import actions.views.EmployeeView;
+import actions.views.ReportConverter;
 import actions.views.ReportView;
 import constants.AttributeConst;
 import constants.ForwardConst;
 import constants.JpaConst;
 import constants.MessageConst;
+import models.Employee;
+import models.Report;
+import services.GoodService;
 import services.ReportService;
 
 /**
@@ -21,6 +26,7 @@ import services.ReportService;
 public class ReportAction extends ActionBase {
 
     private ReportService service;
+    private GoodService goodservice;
 
     /**
      * メソッドを実行する
@@ -29,10 +35,12 @@ public class ReportAction extends ActionBase {
     public void process() throws ServletException, IOException {
 
         service = new ReportService();
+        goodservice = new GoodService();
 
         //メソッドを実行
         invoke();
         service.close();
+        goodservice.close();
     }
 
     /**
@@ -113,6 +121,7 @@ public class ReportAction extends ActionBase {
                     day,
                     getRequestParam(AttributeConst.REP_TITLE),
                     getRequestParam(AttributeConst.REP_CONTENT),
+                    getRequestParam(AttributeConst.REP_PROGRESS),
                     null,
                     null);
 
@@ -151,6 +160,10 @@ public class ReportAction extends ActionBase {
         //idを条件に日報データを取得する
         ReportView rv = service.findOne(toNumber(getRequestParam(AttributeConst.REP_ID)));
 
+        Employee emp = EmployeeConverter.toModel((EmployeeView)getSessionScope(AttributeConst.LOGIN_EMP));
+        Report rep = ReportConverter.toModel(rv);
+        long isGood = goodservice.isGood(emp, rep);
+
         if (rv == null) {
             //該当の日報データが存在しない場合はエラー画面を表示
             forward(ForwardConst.FW_ERR_UNKNOWN);
@@ -158,6 +171,8 @@ public class ReportAction extends ActionBase {
         } else {
 
             putRequestScope(AttributeConst.REPORT, rv); //取得した日報データ
+
+            request.setAttribute("isGood", isGood);
 
             //詳細画面を表示
             forward(ForwardConst.FW_REP_SHOW);
@@ -210,6 +225,7 @@ public class ReportAction extends ActionBase {
             rv.setReportDate(toLocalDate(getRequestParam(AttributeConst.REP_DATE)));
             rv.setTitle(getRequestParam(AttributeConst.REP_TITLE));
             rv.setContent(getRequestParam(AttributeConst.REP_CONTENT));
+            rv.setProgress(getRequestParam(AttributeConst.REP_PROGRESS));
 
             //日報データを更新する
             List<String> errors = service.update(rv);
@@ -235,5 +251,8 @@ public class ReportAction extends ActionBase {
             }
         }
     }
+
+
+
 
 }

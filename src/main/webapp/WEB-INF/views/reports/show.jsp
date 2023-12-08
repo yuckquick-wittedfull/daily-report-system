@@ -7,6 +7,10 @@
 <c:set var="commIdx" value="${ForwardConst.CMD_INDEX.getValue()}" />
 <c:set var="commEdt" value="${ForwardConst.CMD_EDIT.getValue()}" />
 
+<c:set var="actGood" value="Good" />
+<c:set var="commCrt" value="create" />
+<c:set var="commDes" value="destroy" />
+
 <c:import url="/WEB-INF/views/layout/app.jsp">
     <c:param name="content">
 
@@ -27,6 +31,11 @@
                     <th>内容</th>
                     <td><pre><c:out value="${report.content}" /></pre></td>
                 </tr>
+                 <tr>
+                    <th>商談状況</th>
+                    <td><pre><c:out value="${report.progress}" /></pre></td>
+                </tr>
+
                 <tr>
                     <th>登録日時</th>
                     <fmt:parseDate value="${report.createdAt}" pattern="yyyy-MM-dd'T'HH:mm:ss" var="createDay" type="date" />
@@ -39,6 +48,28 @@
                 </tr>
             </tbody>
         </table>
+
+        <c:if test="${isGood == 0}">
+            <div id = "good_list">
+               <p>この記事が良いと思ったらポチッと</p>
+               <form method="POST" action="<c:url value='?action=${actGood}&command=${commCrt}' />">
+                   <input type="image"  src="./image/good.png" alt="いいね" width="35px" height="35px">
+                   <input type="hidden" name="rep_id" value="${report.id}" />
+               </form>
+            </div>
+        </c:if>
+
+        <c:if test="${isGood == 1}">
+            <div id = "good_list">
+               <p>いいねを解除</p>
+               <form method="POST" action="<c:url value='?action=${actGood}&command=${commDes}' />">
+                   <input type="image"  src="./image/good.png" alt="いいね" width="35px" height="35px">
+                   <input type="hidden" name="rep_id" value="${report.id}" />
+               </form>
+            </div>
+        </c:if>
+
+
 
         <c:if test="${sessionScope.login_employee.id == report.employee.id}">
             <p>
